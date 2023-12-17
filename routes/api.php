@@ -39,6 +39,7 @@ Route::name('api.')
         Route::apiResource('permissions', PermissionController::class);
 
         Route::apiResource('categories', CategoryController::class);
+        
 
         // Category Expenses
         Route::get('/categories/{category}/expenses', [
