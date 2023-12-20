@@ -16,12 +16,13 @@ class ExpenseController extends Controller
     public function index(Request $request): ExpenseCollection
     {
         $this->authorize('view-any', Expense::class);
-
         $search = $request->get('search', '');
 
-        $expenses = Expense::search($search)
+        $expenses = Expense::where('user_id', auth()->id()) // Filtra por el ID del usuario autenticado
+        ->search($search)
             ->latest()
-            ->paginate();
+            ->paginate(5)
+            ->withQueryString();
 
         return new ExpenseCollection($expenses);
     }
