@@ -19,16 +19,18 @@ class ExpenseController extends Controller
     public function index(Request $request): View
     {
         $this->authorize('view-any', Expense::class);
-
         $search = $request->get('search', '');
 
-        $expenses = Expense::search($search)
+        $expenses = Expense::where('user_id', auth()->id()) // Filtra por el ID del usuario autenticado
+        ->search($search)
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
         return view('app.expenses.index', compact('expenses', 'search'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -37,11 +39,23 @@ class ExpenseController extends Controller
     {
         $this->authorize('create', Expense::class);
 
-        $users = User::pluck('name', 'id');
+        // Obtén el usuario autenticado
+        $currentUser = auth()->user();
+
+        // Verifica si el usuario autenticado tiene el rol de super-admin
+        if ($currentUser->hasRole('super-admin')) {
+            // Si es super-admin, muestra todos los usuarios
+            $users = User::pluck('name', 'id');
+        } else {
+            // Si no es super-admin, muestra solo el usuario actual
+            $users = User::where('id', $currentUser->id)->pluck('name', 'id');
+        }
+
         $categories = Category::pluck('name', 'id');
 
         return view('app.expenses.create', compact('users', 'categories'));
     }
+
 
     /**
      * Store a newly created resource in storage.

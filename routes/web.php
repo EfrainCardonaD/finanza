@@ -21,7 +21,7 @@ use App\Http\Controllers\PermissionController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])
@@ -35,7 +35,6 @@ Route::prefix('/')
     ->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', PermissionController::class);
-
         Route::resource('categories', CategoryController::class);
         Route::resource('expenses', ExpenseController::class);
         Route::resource('incomes', IncomeController::class);
